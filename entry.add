@@ -1,0 +1,59 @@
+#### if there is trouble with login try to uncomment this line in '/etc/pam.d/sshd':
+# session    required     pam_loginuid.so
+
+##### directory GIT_DATA must not be /home/git -- while /home/git contains the programs and
+##### will be substituted each time you create a fresh container
+##### GIT_DATA should be on an external volume or volume container
+##### it is recommended to do an regular backup of that!
+##### you could setup:
+#####  - GIT_DATA     /data/git
+#####  - UserDir      /data/user
+#####  - HomeBase     /data/home
+#####  - HostKeys     /data/sshd_keys
+##### ==> /data is delivered by a volume container
+##### ==> /data is backuped
+GIT_DATA=${GIT_DATA:-/data/git}
+
+mkdir -p ${GIT_DATA}/repositories ${GIT_DATA}/.ssh /home/git/bin
+rm -f /home/git/.ssh         && ln -s ${GIT_DATA}/.ssh          /home/git/. && chown git:ssh ${GIT_DATA}/.ssh
+rm -f /home/git/repositories && ln -s ${GIT_DATA}/repositories  /home/git/. && chown git:ssh ${GIT_DATA}/repositories
+
+##################################################
+#              changed directory!                #
+##################################################
+cd /home/git                 || exit 1
+##### ensure that mirrrors work
+if [ ! -f ./.ssh/id_rsa ]
+   then
+      su - git -c "ssh-keygen -t rsa -b 4096 -c "gitolite mirror key" -N ''"
+      echo "That's your key for mirror purposes:"
+      cat .ssh/id_rsa.pub
+   fi
+##### fill your known_hosts file (for mirroring)
+if [ ! -f ./.ssh/known_hosts ]
+   then
+      if [ -n "$TRUST_HOSTS" ]
+         then
+            printf "Generating known_hosts file with $TRUST_HOSTS: ... "
+            su - git -c "ssh-keyscan -H $TRUST_HOSTS > /home/git/.ssh/known_hosts" \
+            && echo done
+         fi
+   fi
+
+if [ ! -d ./.gitolite ]
+   then
+      ##### these things must not be done twice:
+      if [ -n "$SSH_KEY" ]
+         then
+            echo "$SSH_KEY" > /tmp/admin.pub
+            su - git -c "bin/gitolite setup -pk /tmp/admin.pub"
+            rm /tmp/admin.pub
+            ##### ensure, that role "OWNERS" is defined and active in .gitolite.rc
+            RUN    su - git -c 'sed -i "/OWNERS/d;  /WRITERS/ a\        OWNERS                      =>  1," .gitolite.rc'
+         else
+            echo "ERROR: you have to provide an ssh key for administrate gitolite ==> exit" >&2
+            exit 1
+         fi
+   else
+      su - git -c "bin/gitolite setup" ##### call this command at every startup
+   fi
