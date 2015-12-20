@@ -11,10 +11,14 @@ all the repository data as well as private ssh keys (for mirror feature). It
 should be on an external volume.
 
 A typical setup would be:
-* GIT_DATA     /data/git
-* UserDir      /data/user
-* HomeBase     /data/home
-* HostKeys     /data/sshd_keys
-whare /data mounted via --volumes-from option.
 
-!Don't forget to backup /data!
+| environment key | value |
+|:--------------- | :-------- |
+| ```GIT_DATA```  | ```/data/git``` |
+| ```UserDir```   | ```/data/user``` |
+| ```HomeBase```  | ```/data/home``` |
+| ```HostKeys```  | ```/data/sshd_keys``` |
+
+where ```/data``` mounted via ```--volumes-from``` option.
+
+**Don't forget to backup ```/data```!!**
