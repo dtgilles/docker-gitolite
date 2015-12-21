@@ -49,7 +49,10 @@ if [ ! -d ./.gitolite ]
             su - git -c "bin/gitolite setup -pk /tmp/admin.pub"
             rm /tmp/admin.pub
             ##### ensure, that role "OWNERS" is defined and active in .gitolite.rc
-            su - git -c 'sed -i "/OWNERS/d;  /WRITERS/ a\        OWNERS                      =>  1," .gitolite.rc'
+            su - git -c 'sed -i -e "/OWNERS/d" \
+                                -e "/WRITERS/  a \        OWNERS                      =>  1," \
+                                -e "/ROLES *=>/i \    OWNER_ROLENAME                  =>  '"'OWNERS',"'" \
+                                .gitolite.rc'
          else
             echo "ERROR: you have to provide an ssh key for administrate gitolite ==> exit" >&2
             exit 1
