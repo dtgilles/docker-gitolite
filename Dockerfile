@@ -12,4 +12,4 @@ RUN    useradd -g ssh -u 1000 -m git \
 ##### this is developer version ==> checkout has to get fixed for production
 
 ##### this file is automatically sourced by entry script
-COPY entry.add /etc/defaults/ssh
+COPY entry.add /etc/default/ssh
