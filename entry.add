@@ -57,3 +57,8 @@ if [ ! -d ./.gitolite ]
    else
       su - git -c "bin/gitolite setup" ##### call this command at every startup
    fi
+
+##### we are in /home/git and .gitolite.rc should exist
+[ -e .gitolite.rc ]          || exit 1
+for f in $DisableFeature; do              sed -i "/'$f'/s/^#*/#/" .gitolite.rc;           done
+for f in $EnableFeature;  do              sed -i "/'$f'/s/##*//"  .gitolite.rc;           done
