@@ -25,6 +25,6 @@ A typical setup would be:
 | ```EnableFeature```| ```D```       | features to enable (in this case "delete repositories"), see http://gitolite.com/gitolite/rc.html |
 | ```DisableFeature```|```daemon gitweb```| features to disable, see http://gitolite.com/gitolite/rc.html |
 
-where ```/data``` mounted via ```--volumes-from``` option. Per Default there is a Role named ```OWNERS``` that could be used to self-administer repository ownership. If you don't like that, you could disabling that extending ```DisableFeature``` list by ```OWNERS```.
+where ```/data``` mounted via ```--volumes-from``` option. Per Default there is a role named ```OWNERS``` that could be used to self-administer repository ownership. If you don't like that, you could disable that extending ```DisableFeature``` list by ```OWNERS```.
 
 **Don't forget to backup ```/data```!!**
