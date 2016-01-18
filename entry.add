@@ -17,6 +17,7 @@ GIT_DATA=${GIT_DATA:-/data/git}
 mkdir -p ${GIT_DATA}/repositories ${GIT_DATA}/.ssh /home/git/bin
 rm -f /home/git/.ssh         && ln -s ${GIT_DATA}/.ssh          /home/git/. && chown git:ssh ${GIT_DATA}/.ssh
 rm -f /home/git/repositories && ln -s ${GIT_DATA}/repositories  /home/git/. && chown git:ssh ${GIT_DATA}/repositories
+[ -d ${GIT_DATA}/.gitolite ] && ln -s ${GIT_DATA}/.gitolite     /home/git/. 2>/dev/null
 
 ##################################################
 #              changed directory!                #
@@ -41,7 +42,7 @@ if [ ! -f ./.ssh/known_hosts ]
    fi
 
 ##### these things must not be done twice:
-if [ ! -d ./.gitolite ]
+if [ ! -d ./.gitolite/. ]
    then
       if [ -n "$SSH_KEY" ]
          then
@@ -53,6 +54,8 @@ if [ ! -d ./.gitolite ]
                                 -e "/WRITERS/  a \        OWNERS                      =>  1," \
                                 -e "/ROLES *=>/i \    OWNER_ROLENAME                  =>  '"'OWNERS',"'" \
                                 .gitolite.rc'
+            ##### move ./gitolite to persistent volume
+            mv /home/git/.gitolite ${GIT_DATA}/. && ln -s ${GIT_DATA}/.gitolite /home/git/.
          else
             echo "ERROR: you have to provide an ssh key for administrate gitolite ==> exit" >&2
             exit 1
