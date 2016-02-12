@@ -24,11 +24,13 @@ rm -f /home/git/repositories && ln -s ${GIT_DATA}/repositories  /home/git/. && c
 ##################################################
 cd /home/git                 || exit 1
 ##### ensure that mirrrors work
+new_automation_key=0
 if [ ! -f .ssh/id_rsa ]
    then
       su - git -c "ssh-keygen -t rsa -b 4096 -C 'gitolite mirror key' -N '' -f .ssh/id_rsa"
       echo "That's your key for mirror purposes:"
       cat .ssh/id_rsa.pub
+      new_automation_key=1
    fi
 
 ##### fill your known_hosts file (for mirroring)
@@ -63,6 +65,20 @@ if [ ! -d ./.gitolite/. ]
          fi
    else
       su - git -c "bin/gitolite setup" ##### call this command at every startup
+   fi
+
+##### this allows admins to read the public key even if they miss
+##### direct shell permission
+if [ "$new_automation_key" = 1 ]
+   then
+      su - git -c '
+         export GIT_WORK_TREE=$HOME/.gitolite
+         mkdir -p "${GIT_WORK_TREE}/keydir"
+         cp $HOME/.ssh/id_rsa.pub ${GIT_WORK_TREE}/keydir/automation.pub
+         cd "$HOME/repositories/gitolite-admin.git"
+         git add keydir/automation.pub
+         git commit -am "add key for automation purposes like mirroring"
+         '
    fi
 
 ##### we are in /home/git and .gitolite.rc should exist
