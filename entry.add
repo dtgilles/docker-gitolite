@@ -30,6 +30,7 @@ if [ ! -f .ssh/id_rsa ]
       echo "That's your key for mirror purposes:"
       cat .ssh/id_rsa.pub
    fi
+
 ##### fill your known_hosts file (for mirroring)
 if [ ! -f ./.ssh/known_hosts ]
    then

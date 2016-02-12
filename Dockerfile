@@ -1,5 +1,5 @@
 FROM       dtgilles/sshgw
-MAINTAINER r.gilles@telekom.de
+MAINTAINER dtgilles@t-online.de
 
 RUN    apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -yq git \
@@ -12,4 +12,4 @@ RUN    useradd -g ssh -u 1000 -m git \
 ##### this is developer version ==> checkout has to get fixed for production
 
 ##### this file is automatically sourced by entry script
-COPY entry.add /etc/defaults/ssh
+COPY entry.add /entry.add.10-git-init.sh
