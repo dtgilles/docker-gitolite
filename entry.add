@@ -47,6 +47,7 @@ if [ ! -f ./.ssh/known_hosts ]
 ##### these things must not be done twice:
 if [ ! -d ./.gitolite/. ]
    then
+      rm -f .gitolite           ##### if this is a link then remove it
       if [ -n "$SSH_KEY" ]
          then
             echo "$SSH_KEY" > /tmp/admin.pub
