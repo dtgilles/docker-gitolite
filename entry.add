@@ -53,11 +53,6 @@ if [ ! -d ./.gitolite/. ]
             echo "$SSH_KEY" > /tmp/admin.pub
             su - git -c "bin/gitolite setup -pk /tmp/admin.pub"
             rm /tmp/admin.pub
-            ##### ensure, that role "OWNERS" is defined and active in .gitolite.rc
-            su - git -c 'sed -i -e "/OWNERS/d" \
-                                -e "/WRITERS/  a \        OWNERS                      =>  1," \
-                                -e "/ROLES *=>/i \    OWNER_ROLENAME                  =>  '"'OWNERS',"'" \
-                                .gitolite.rc'
             ##### move ./gitolite to persistent volume
             mv /home/git/.gitolite ${GIT_DATA}/. && ln -s ${GIT_DATA}/.gitolite /home/git/.
          else
@@ -67,6 +62,11 @@ if [ ! -d ./.gitolite/. ]
    else
       su - git -c "bin/gitolite setup" ##### call this command at every startup
    fi
+##### ensure, that role "OWNERS" is defined and active in .gitolite.rc
+su - git -c 'sed -i -e "/OWNERS/d" \
+                    -e "/WRITERS/  a \        OWNERS                      =>  1," \
+                    -e "/ROLES *=>/i \    OWNER_ROLENAME                  =>  '"'OWNERS',"'" \
+                    .gitolite.rc'
 
 ##### this allows admins to read the public key even if they miss
 ##### direct shell permission
