@@ -59,8 +59,6 @@ if [ ! -d ./.gitolite/. ]
             echo "ERROR: you have to provide an ssh key for administrate gitolite ==> exit" >&2
             exit 1
          fi
-   else
-      su - git -c "bin/gitolite setup" ##### call this command at every startup
    fi
 ##### ensure, that role "OWNERS" is defined and active in .gitolite.rc
 su - git -c 'sed -i -e "/OWNERS/d" \
@@ -86,3 +84,6 @@ if [ "$new_automation_key" = 1 ]
 [ -e .gitolite.rc ]          || exit 1
 for f in $DisableFeature; do              sed -i "/'$f'/s/^#*/#/" .gitolite.rc;           done
 for f in $EnableFeature;  do              sed -i "/'$f'/s/##*//"  .gitolite.rc;           done
+
+##### apply all the enable/disable and OWNERS changes
+su - git -c "bin/gitolite setup"
