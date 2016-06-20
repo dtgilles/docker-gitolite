@@ -59,6 +59,8 @@ if [ ! -d ./.gitolite/. ]
             echo "ERROR: you have to provide an ssh key for administrate gitolite ==> exit" >&2
             exit 1
          fi
+   else
+      su - git -c "bin/gitolite setup"      ##### create a .gitolite.rc if it does not exist
    fi
 ##### ensure, that role "OWNERS" is defined and active in .gitolite.rc
 su - git -c 'sed -i -e "/OWNERS/d" \
