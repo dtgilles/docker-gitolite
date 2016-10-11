@@ -51,6 +51,8 @@ if [ ! -d ./.gitolite/. ]
       if [ -n "$SSH_KEY" ]
          then
             echo "$SSH_KEY" > /tmp/admin.pub
+            ##### here some warnings could appear: >>role 'OWNERS' not allowed, ignoring<<
+            ##### ...that will be fixed later in this script
             su - git -c "bin/gitolite setup -pk /tmp/admin.pub"
             rm /tmp/admin.pub
             ##### move ./gitolite to persistent volume
@@ -60,7 +62,8 @@ if [ ! -d ./.gitolite/. ]
             exit 1
          fi
    else
-      su - git -c "bin/gitolite setup"      ##### create a .gitolite.rc if it does not exist
+      ##### create a .gitolite.rc if it does not exist
+      su - git -c "[ -f .gitolite.rc ] || bin/gitolite setup"
    fi
 ##### ensure, that role "OWNERS" is defined and active in .gitolite.rc
 su - git -c 'sed -i -e "/OWNERS/d" \
